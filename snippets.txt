@@ -1,0 +1,13 @@
+# Snip configuration. Paths use / to create nested submenus.
+# Shortcut syntax: Ctrl, Shift, Alt, Win plus Space, letters, digits, arrows, or F1-F12.
+# Example: hotkey<TAB>Ctrl+Shift+Space
+# Format: item<TAB>menu/submenu/name<TAB>text to paste
+
+hotkey	Ctrl+Shift+Space
+
+item	Work/Status update	Status: I am currently working on this and will follow up shortly.
+item	Work/Email/Opening	Hello,\n\nThank you for your message.
+item	Work/Email/Closing	Best regards,\nYour Name
+item	Development/Code/To-do	// TODO: implement this
+item	Development/Code/Log	std::cout << "value=" << value << std::endl;
+item	Development/Commit message	feat: describe the change
