@@ -2,6 +2,8 @@
 # Shortcut syntax: Ctrl, Shift, Alt, Win plus Space, letters, digits, arrows, or F1-F12.
 # Example: hotkey<TAB>Ctrl+Shift+Space
 # Format: item<TAB>menu/submenu/name<TAB>text to paste
+# In snippet text: use \n for a newline, \t for a tab, {ENTER} for a real Enter key press,
+# and {NEWLINE} for a CRLF inserted through clipboard paste.
 
 hotkey	Ctrl+Shift+Space
 
@@ -11,3 +13,8 @@ item	Work/Email/Closing	Best regards,\nYour Name
 item	Development/Code/To-do	// TODO: implement this
 item	Development/Code/Log	std::cout << "value=" << value << std::endl;
 item	Development/Commit message	feat: describe the change
+item	Development/Commit and submit	feat: describe the change{ENTER}
+item	Examples/Formatting/Line break	First line\nSecond line
+item	Examples/Formatting/Tab separated	Name:\tValue
+item	Examples/Actions/Press Enter	Submit this text{ENTER}
+item	Examples/Actions/Explicit newline	First line{NEWLINE}Second line

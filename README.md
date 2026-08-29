@@ -43,3 +43,7 @@ Snip must be running for the shortcut to work. Some elevated applications may re
 Snip uses the registered `Ctrl+Shift+Space` Windows hotkey rather than a global mouse hook. If another application already owns that shortcut, Snip will show an error at startup; change `ID_HOTKEY` in `src/main.cpp` to select another shortcut.
 
 Hovering over a snippet in the menu shows its full text in a preview popup. The preview does not take keyboard focus.
+
+### Special tokens
+
+Use `{ENTER}` in a snippet to send a real Enter/Return key press at that point. Text before and after the token is pasted in separate chunks. Use `{NEWLINE}` when you want to insert a CRLF through the clipboard instead.
