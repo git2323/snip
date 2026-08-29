@@ -271,19 +271,42 @@ void AddMenuItems(HMENU menu, const MenuNode& node) {
     }
 }
 
-void PasteText(const std::wstring& text) {
-    if (!OpenClipboard(g_window)) return;
+static void SendEnterKey() {
+    INPUT inputs[2]{};
+    inputs[0].type = INPUT_KEYBOARD;
+    inputs[0].ki.wVk = VK_RETURN;
+    inputs[1] = inputs[0];
+    inputs[1].ki.dwFlags = KEYEVENTF_KEYUP;
+    SendInput(2, inputs, sizeof(INPUT));
+}
+
+static bool SetClipboardText(const std::wstring& text) {
+    if (!OpenClipboard(g_window)) return false;
     EmptyClipboard();
     const SIZE_T bytes = (text.size() + 1) * sizeof(wchar_t);
     HGLOBAL memory = GlobalAlloc(GMEM_MOVEABLE, bytes);
-    if (memory) {
-        void* destination = GlobalLock(memory);
-        memcpy(destination, text.c_str(), bytes);
-        GlobalUnlock(memory);
-        SetClipboardData(CF_UNICODETEXT, memory);
+    if (!memory) {
+        CloseClipboard();
+        return false;
+    }
+    void* destination = GlobalLock(memory);
+    if (!destination) {
+        GlobalFree(memory);
+        CloseClipboard();
+        return false;
+    }
+    memcpy(destination, text.c_str(), bytes);
+    GlobalUnlock(memory);
+    if (!SetClipboardData(CF_UNICODETEXT, memory)) {
+        GlobalFree(memory);
+        CloseClipboard();
+        return false;
     }
     CloseClipboard();
+    return true;
+}
 
+static void SendPaste() {
     if (g_targetWindow && IsWindow(g_targetWindow)) {
         SetForegroundWindow(g_targetWindow);
         Sleep(40);
@@ -299,6 +322,55 @@ void PasteText(const std::wstring& text) {
         inputs[3].ki.wVk = VK_CONTROL;
         inputs[3].ki.dwFlags = KEYEVENTF_KEYUP;
         SendInput(4, inputs, sizeof(INPUT));
+    }
+}
+
+static void PasteChunk(const std::wstring& chunk) {
+    if (SetClipboardText(chunk)) SendPaste();
+}
+
+void PasteText(const std::wstring& text) {
+    const std::wstring enterToken = L"{ENTER}";
+    const std::wstring newlineToken = L"{NEWLINE}";
+
+    // The target was captured before the menu took focus. Do not replace it
+    // here: GetForegroundWindow() would return Snip after the menu closes.
+    if (text.find(enterToken) == std::wstring::npos &&
+        text.find(newlineToken) == std::wstring::npos) {
+        if (SetClipboardText(text)) SendPaste();
+        return;
+    }
+
+    size_t pos = 0;
+    while (pos < text.size()) {
+        const size_t nextEnter = text.find(enterToken, pos);
+        const size_t nextNewline = text.find(newlineToken, pos);
+        size_t nextPos = std::wstring::npos;
+        std::wstring token;
+
+        if (nextEnter != std::wstring::npos &&
+            (nextNewline == std::wstring::npos || nextEnter < nextNewline)) {
+            nextPos = nextEnter;
+            token = enterToken;
+        } else if (nextNewline != std::wstring::npos) {
+            nextPos = nextNewline;
+            token = newlineToken;
+        }
+
+        if (nextPos == std::wstring::npos) {
+            PasteChunk(text.substr(pos));
+            break;
+        }
+
+        if (nextPos > pos) PasteChunk(text.substr(pos, nextPos - pos));
+        if (token == enterToken) {
+            Sleep(20);
+            SendEnterKey();
+        } else {
+            PasteChunk(L"\r\n");
+        }
+        pos = nextPos + token.size();
+        Sleep(20);
     }
 }
 
