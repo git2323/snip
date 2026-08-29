@@ -29,13 +29,13 @@ hotkey<TAB>Ctrl+Shift+Space
 
 Supported modifiers are `Ctrl`, `Shift`, `Alt`, and `Win`. Supported keys include letters, digits, `Space`, `Tab`, `Enter`, arrow keys, and `F1` through `F12`.
 
-Menus are created automatically from the path. Use `\\n` for a newline and `\\t` for a tab in pasted text. Lines beginning with `#` are comments. Reload from the tray icon or the root context menu after editing.
+Menus are created automatically from the path. Use `\n` for a newline and `\t` for a tab in pasted text. Lines beginning with `#` are comments. Reload from the tray icon or the root context menu after editing.
 
 Example:
 
 ```text
 item	Support/Replies/Welcome	Hello, how can I help?
-item	Support/Replies	Thanks for getting in touch.\\n\\nBest regards,
+item	Support/Replies	Thanks for getting in touch.\n\nBest regards,
 ```
 
 Snip must be running for the shortcut to work. Some elevated applications may reject simulated paste input; run Snip elevated only when you explicitly trust the target application.
