@@ -10,7 +10,8 @@ permissions:
 
 jobs:
   build:
-    runs-on: windows-latest
+    # Keep the runner aligned with the Visual Studio 17 2022 generator below.
+    runs-on: windows-2022
 
     steps:
       - name: Checkout
